@@ -22,14 +22,16 @@ class SpotifyRandomAlbumPicker(toga.App):
         button = toga.Button(
             "Get a random album",
             on_press=self.get_album,
-            style=Pack(padding=5),
+            style=Pack(padding=10),
         )
 
         self.name_label = toga.Label(
             "",
             style=Pack(
-                padding=(10, 5),
+                padding=(30, 5),
                 text_align="center",
+                font_weight="bold",
+                font_size=24,
             ),
         )
 
@@ -42,7 +44,7 @@ class SpotifyRandomAlbumPicker(toga.App):
 
     def get_album(self, button: toga.Button):
         album = random_album.get_random_album(self.albums)
-        album_text = f"{album['artist']} | {album['name']}"
+        album_text = f"{album['artist']}\n{album['name']}"
         self.name_label.text = album_text
 
 
