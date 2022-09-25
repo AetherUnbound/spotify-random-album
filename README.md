@@ -17,8 +17,10 @@ conda install -c conda-forge gtk3 pygobject
 
 1. Populate the `.env` file
 2. Plug in an Android phone with debugging enabled
-3. Run `briefcase create android`
-4. Run `briefcase run android`
+3. Run the app locally once (via `briefcase dev`) so it generates a `.cache-spotipy` or `cache-spotipy.py` file
+4. Run `briefcase create android`
+5. Run `briefcase build android -u`
+6. Run `briefcase run android`
 
 ## Original script
 

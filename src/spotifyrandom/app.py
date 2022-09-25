@@ -3,13 +3,11 @@ A small app which chooses a random album to play from your liked album library.
 """
 import logging
 import toga
-from dotenv import load_dotenv
 from toga.style import Pack
 from toga.style.pack import COLUMN, ROW
 
 from . import random_album
 
-load_dotenv()
 
 log = logging.getLogger("main-app")
 

@@ -1,11 +1,14 @@
 import logging
 import random
+from pathlib import Path
 
 import spotipy
+from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
 
 
 log = logging.getLogger("spotipy-bot")
+load_dotenv(dotenv_path=Path(__file__).parent / "env.py")
 
 SCOPE = "user-library-read"
 
@@ -34,7 +37,7 @@ def get_albums(sp) -> list[dict]:
 
 
 def get_client():
-    oauth = SpotifyOAuth(scope=SCOPE, cache_path=".cache-spotipy")
+    oauth = SpotifyOAuth(scope=SCOPE, cache_path=Path(__file__).parent / "cache-spotipy.py")
     return spotipy.Spotify(auth_manager=oauth)
 
 
