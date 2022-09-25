@@ -13,6 +13,13 @@ For conda on linux, you may need to run:
 conda install -c conda-forge gtk3 pygobject
 ```
 
+### How to build and run
+
+1. Populate the `.env` file
+2. Plug in an Android phone with debugging enabled
+3. Run `briefcase create android`
+4. Run `briefcase run android`
+
 ## Original script
 
 The original script ([spotify-random.py](./spotify-random.py)) can be run in an environment with spotipy installed.

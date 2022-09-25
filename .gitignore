@@ -155,3 +155,4 @@ dmypy.json
 
 .idea/
 *.sw*
+.cache-spotipy

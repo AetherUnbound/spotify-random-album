@@ -17,6 +17,8 @@ requires = [
     'python-dotenv'
 ]
 
+[tool.setuptools.package-data]
+"*" = [".env"]
 
 [tool.briefcase.app.spotifyrandom.macOS]
 requires = [
