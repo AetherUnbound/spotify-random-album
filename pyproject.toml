@@ -13,7 +13,8 @@ description = "A small app which chooses a random album to play from your liked 
 icon = "src/spotifyrandom/resources/spotifyrandom"
 sources = ['src/spotifyrandom']
 requires = [
-    'spotipy'
+    'spotipy',
+    'python-dotenv'
 ]
 
 
