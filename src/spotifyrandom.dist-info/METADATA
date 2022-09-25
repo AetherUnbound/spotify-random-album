@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Briefcase-Version: 0.3.9
+Name: spotifyrandom
+Formal-Name: Spotify Random Album Picker
+App-ID: info.dataswamp.spotifyrandom
+Version: 0.0.1
+Home-page: https://dataswamp.info/
+Author: Madison Swain-Bowden
+Author-email: bowdenm@spu.edu
+Summary: A small app which chooses a random album to play from your liked album library.

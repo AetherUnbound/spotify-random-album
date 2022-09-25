@@ -8,6 +8,11 @@ consider** [`becoming a financial member of BeeWare`](https://beeware.org/contri
 
 A small app which chooses a random album to play from your liked album library.
 
+For conda on linux, you may need to run:
+```bash
+conda install -c conda-forge gtk3 pygobject
+```
+
 ## Original script
 
 The original script ([spotify-random.py](./spotify-random.py)) can be run in an environment with spotipy installed.
