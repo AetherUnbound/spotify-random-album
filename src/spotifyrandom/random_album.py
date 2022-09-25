@@ -1,4 +1,3 @@
-import logging
 import random
 from pathlib import Path
 
@@ -7,7 +6,6 @@ from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
 
 
-log = logging.getLogger("spotipy-bot")
 load_dotenv(dotenv_path=Path(__file__).parent / "env.py")
 
 SCOPE = "user-library-read"
@@ -24,20 +22,21 @@ def extract_album(items: list) -> list:
 
 def get_albums(sp) -> list[dict]:
     albums = []
-    log.info("Getting initial results")
+    print("Getting initial results")
     results = sp.current_user_saved_albums(limit=50)
     albums.extend(extract_album(results["items"]))
     while results["next"]:
-        log.info(
-            f"Getting {results['limit'] + results['offset']} of {results['total']}"
-        )
+        print(f"Getting {results['limit'] + results['offset']} of {results['total']}")
         results = sp.next(results)
         albums.extend(extract_album(results["items"]))
     return albums
 
 
 def get_client():
-    oauth = SpotifyOAuth(scope=SCOPE, cache_path=Path(__file__).parent / "cache-spotipy.py")
+    oauth = SpotifyOAuth(
+        scope=SCOPE,
+        cache_path=Path(__file__).parent / "cache-spotipy.py",
+    )
     return spotipy.Spotify(auth_manager=oauth)
 
 

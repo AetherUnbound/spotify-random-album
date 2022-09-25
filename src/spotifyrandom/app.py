@@ -1,22 +1,18 @@
 """
 A small app which chooses a random album to play from your liked album library.
 """
-import logging
 import toga
 from toga.style import Pack
-from toga.style.pack import COLUMN, ROW
+from toga.style.pack import COLUMN, CENTER, ROW
 
 from . import random_album
 
 
-log = logging.getLogger("main-app")
-
-
 class SpotifyRandomAlbumPicker(toga.App):
     def startup(self):
-        log.info("Creating client")
+        print("Creating client")
         self._sp_client = random_album.get_client()
-        log.info("Loading albums")
+        print("Loading albums")
         self.albums = random_album.get_albums(self._sp_client)
         main_box = toga.Box(style=Pack(direction=COLUMN))
 
@@ -26,18 +22,33 @@ class SpotifyRandomAlbumPicker(toga.App):
             style=Pack(padding=10),
         )
 
-        self.name_label = toga.Label(
+        self.artist_label = toga.Label(
             "",
             style=Pack(
-                padding=(30, 5),
-                text_align="center",
+                direction=ROW,
+                padding=(30, 10, 5),
+                text_align=CENTER,
+                alignment=CENTER,
                 font_weight="bold",
                 font_size=24,
+                flex=1,
+            ),
+        )
+        self.album_label = toga.Label(
+            "",
+            style=Pack(
+                direction=ROW,
+                padding=(5, 10),
+                text_align=CENTER,
+                alignment=CENTER,
+                font_size=22,
+                flex=1,
             ),
         )
 
         main_box.add(button)
-        main_box.add(self.name_label)
+        main_box.add(self.artist_label)
+        main_box.add(self.album_label)
 
         self.main_window = toga.MainWindow(title=self.formal_name)
         self.main_window.content = main_box
@@ -45,8 +56,11 @@ class SpotifyRandomAlbumPicker(toga.App):
 
     def get_album(self, button: toga.Button):
         album = random_album.get_random_album(self.albums)
-        album_text = f"{album['artist']}\n{album['name']}"
-        self.name_label.text = album_text
+        print(f"{album=}")
+        self.artist_label.text = album["artist"]
+        self.album_label.text = album["name"]
+        self.artist_label.refresh()
+        self.album_label.refresh()
 
 
 def main():
