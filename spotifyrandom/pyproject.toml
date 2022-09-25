@@ -1,0 +1,64 @@
+[tool.briefcase]
+project_name = "Spotify Random Album Picker"
+bundle = "info.dataswamp"
+version = "0.0.1"
+url = "https://dataswamp.info/"
+license = "MIT license"
+author = 'Madison Swain-Bowden'
+author_email = "bowdenm@spu.edu"
+
+[tool.briefcase.app.spotifyrandom]
+formal_name = "Spotify Random Album Picker"
+description = "A small app which chooses a random album to play from your liked album library."
+icon = "src/spotifyrandom/resources/spotifyrandom"
+sources = ['src/spotifyrandom']
+requires = [
+]
+
+
+[tool.briefcase.app.spotifyrandom.macOS]
+requires = [
+    'toga-cocoa>=0.3.0.dev34',
+    'std-nslog~=1.0.0'
+]
+
+[tool.briefcase.app.spotifyrandom.linux]
+requires = [
+    'toga-gtk>=0.3.0.dev34',
+]
+
+[tool.briefcase.app.spotifyrandom.linux.appimage]
+system_requires = [
+    'gir1.2-webkit-3.0',
+    'libcairo2-dev',
+    'libgirepository1.0-dev',
+    'libgtk-3-dev',
+    'libpango1.0-dev',
+    'librsvg2-dev',
+    'libwebkitgtk-3.0-0',
+]
+linuxdeploy_plugins = [
+    'DEPLOY_GTK_VERSION=3 gtk',
+]
+
+[tool.briefcase.app.spotifyrandom.linux.flatpak]
+flatpak_runtime = 'org.gnome.Platform'
+flatpak_runtime_version = '42'
+flatpak_sdk = 'org.gnome.Sdk'
+
+[tool.briefcase.app.spotifyrandom.windows]
+requires = [
+    'toga-winforms>=0.3.0.dev34',
+]
+
+# Mobile deployments
+[tool.briefcase.app.spotifyrandom.iOS]
+requires = [
+    'toga-iOS>=0.3.0.dev34',
+    'std-nslog~=1.0.0'
+]
+
+[tool.briefcase.app.spotifyrandom.android]
+requires = [
+    'toga-android>=0.3.0.dev34'
+]
