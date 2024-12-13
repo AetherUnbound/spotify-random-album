@@ -13,9 +13,16 @@ For conda on linux, you may need to run:
 conda install -c conda-forge gtk3 pygobject
 ```
 
+### Installing
+
+- Create the environment: `conda create -n spotify-random-album -c conda-forge meson gtk3 pygobject python=3.11 -y`
+- Install briefcase: `pip install briefcase`
+- Install dependencies: `pip install -e .`
+- Run the app: `briefcase dev`
+
 ### How to build and run
 
-1. Populate the `.env` file
+1. Populate the `.env` file (and then the `src/spotifyrandom/env.py` file)
 2. Plug in an Android phone with debugging enabled
 3. Set Android USB to "File Transfer"
 4. Run the app locally once (via `briefcase dev`) so it generates a `.cache-spotipy` or `cache-spotipy.py` file
@@ -29,7 +36,7 @@ The original script ([spotify-random.py](./spotify-random.py)) can be run in an 
 It also needs the following environment variables in order to run:
 
 ```dotenv
-SPOTIPY_REDIRECT_URI=http://127.0.0.1:9090
+SPOTIPY_REDIRECT_URI=http://localhost:8888/callback
 SPOTIPY_CLIENT_ID=[redacted]
 SPOTIPY_CLIENT_SECRET=[redacted]
 ```
