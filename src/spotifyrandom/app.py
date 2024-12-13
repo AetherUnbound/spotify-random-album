@@ -21,16 +21,6 @@ class SpotifyRandomAlbumPicker(toga.App):
 
         self.albums = []
         self._album_cache = self.paths.cache / CACHE_FILE
-        if self._album_cache.exists():
-            print("Loading albums from cache")
-            try:
-                self.albums = json.loads(self._album_cache.read_text())
-            except json.JSONDecodeError:
-                print("Failed to load cache, loading albums")
-        if not self.albums:
-            print("Loading albums")
-            self.albums = random_album.get_albums(self._sp_client)
-            self.save_to_cache()
 
         box_main = toga.Box(style=Pack(direction=COLUMN))
 
@@ -93,6 +83,20 @@ class SpotifyRandomAlbumPicker(toga.App):
         self.main_window.content = box_main
         self.main_window.show()
 
+    def on_running(self) -> None:
+        print("Loading from cache")
+        if self._album_cache.exists():
+            print("Loading albums from cache")
+            try:
+                self.albums = json.loads(self._album_cache.read_text())
+                self.update_album_count_label()
+            except json.JSONDecodeError:
+                print("Failed to load cache, loading albums")
+        if not self.albums:
+            print("Loading albums")
+            yield from self.refresh_cache(None)
+
+
     def get_album(self, button: toga.Button):
         album = random_album.get_random_album(self.albums)
         print(f"{album=}")
@@ -104,13 +108,17 @@ class SpotifyRandomAlbumPicker(toga.App):
     def save_to_cache(self):
         self._album_cache.write_text(json.dumps(self.albums))
 
-    def refresh_cache(self, button: toga.Button):
+    def update_album_count_label(self):
+        self.label_album_count.text = f"Total albums: {len(self.albums)}"
+        self.label_album_count.refresh()
+
+    def refresh_cache(self, button: toga.Button | None):
         self.label_album_count.text = "Refreshing cache..."
         # Redraw (see: https://github.com/beeware/toga/issues/1102)
         yield 0.1
         yield from self.update_albums()
         self.save_to_cache()
-        self.label_album_count.text = f"Total albums: {len(self.albums)}"
+        self.update_album_count_label()
 
     def update_albums(self):
         self.albums = []
