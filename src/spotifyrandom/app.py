@@ -68,6 +68,10 @@ class SpotifyRandomAlbumPicker(toga.App):
         spacer = toga.Box(style=Pack(flex=1))
 
         # Cache content
+        self.label_album_count = toga.Label(
+            f"Total albums: {len(self.albums)}",
+            style=Pack(text_align=CENTER, font_size=12, flex=1),
+        )
         self.button_refresh_cache = toga.Button(
             "Refresh cache",
             on_press=self.refresh_cache,
@@ -76,7 +80,7 @@ class SpotifyRandomAlbumPicker(toga.App):
 
         box_main.add(self.button_get_album, self.label_artist, self.label_album)
         box_main.add(spacer)
-        box_main.add(self.button_refresh_cache)
+        box_main.add(self.label_album_count, self.button_refresh_cache)
 
         self.main_window = toga.MainWindow(title=self.formal_name)
         self.main_window.content = box_main
@@ -96,6 +100,8 @@ class SpotifyRandomAlbumPicker(toga.App):
     def refresh_cache(self, button: toga.Button):
         self.albums = random_album.get_albums(self._sp_client)
         self.save_to_cache()
+        self.label_album_count.text = f"Total albums: {len(self.albums)}"
+        self.label_album_count.refresh()
 
 
 def main():
