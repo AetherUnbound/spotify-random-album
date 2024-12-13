@@ -1,9 +1,19 @@
+[project]
+name = "spotify-random-album"
+version = "0.0.1"
+dependencies = [
+    "spotipy",
+    "toga",
+    "python-dotenv",
+    "briefcase"
+]
+
 [tool.briefcase]
 project_name = "Spotify Random Album Picker"
 bundle = "info.dataswamp"
 version = "0.0.1"
 url = "https://dataswamp.info/"
-license = "MIT license"
+license.file = "LICENSE"
 author = 'Madison Swain-Bowden'
 author_email = "bowdenm@spu.edu"
 
@@ -14,7 +24,7 @@ icon = "src/spotifyrandom/resources/spotifyrandom"
 sources = ['src/spotifyrandom']
 requires = [
     'spotipy',
-    'python-dotenv'
+    'python-dotenv',
 ]
 
 [tool.setuptools.package-data]
