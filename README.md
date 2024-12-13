@@ -22,6 +22,8 @@ conda install -c conda-forge gtk3 pygobject
 
 ### How to build and run
 
+_NB: For help here, see the [Beeware tutorial for Android apps](https://docs.beeware.org/en/latest/tutorial/tutorial-5/android.html)_
+
 1. Populate the `.env` file (and then the `src/spotifyrandom/env.py` file)
 2. Plug in an Android phone with debugging enabled
 3. Set Android USB to "File Transfer"
