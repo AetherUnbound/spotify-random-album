@@ -13,6 +13,7 @@ from . import random_album
 
 
 CACHE_FILE = "album-cache.json"
+IDEAL_SIZE = 300
 
 
 class SpotifyRandomAlbumPicker(toga.App):
@@ -55,15 +56,17 @@ class SpotifyRandomAlbumPicker(toga.App):
                 flex=1,
             ),
         )
-        box_webview = toga.Box(style=Pack(direction=ROW, flex=1))
-        self.webview_album_art = toga.WebView(style=Pack(flex=1))
+        box_webview = toga.Box(style=Pack(direction=ROW, alignment=CENTER))
+        self.webview_album_art = toga.WebView(
+            style=Pack(alignment=CENTER, height=IDEAL_SIZE, width=IDEAL_SIZE)
+        )
         box_webview.add(
             # horizontal spacer left
             toga.Box(style=Pack(flex=1)),
             # content
             self.webview_album_art,
             # horizontal spacer right
-            toga.Box(style=Pack(flex=1))
+            toga.Box(style=Pack(flex=1)),
         )
 
         spacer = toga.Box(style=Pack(flex=1))
@@ -83,10 +86,7 @@ class SpotifyRandomAlbumPicker(toga.App):
         )
 
         box_main.add(
-            self.button_get_album,
-            self.label_artist,
-            self.label_album,
-            box_webview
+            self.button_get_album, self.label_artist, self.label_album, box_webview
         )
         box_main.add(spacer)
         box_main.add(
@@ -118,18 +118,15 @@ class SpotifyRandomAlbumPicker(toga.App):
         self.label_artist.text = album["artist"]
         self.label_album.text = album["name"]
         if album["images"]:
-            max_size = min(self.app.screens[0].size)
             final_image = None
             # Start from the smallest image and work up
             for image in reversed(album["images"]):
-                if image["width"] > max_size or image["height"] > max_size:
-                    break
                 final_image = image
+                if image["width"] >= IDEAL_SIZE or image["height"] >= IDEAL_SIZE:
+                    break
             print(f"{final_image=}")
             actual_size = min(final_image["width"], final_image["height"])
             print(f"{actual_size=}")
-            self.webview_album_art.style.height = actual_size
-            self.webview_album_art.style.width = actual_size
             self.webview_album_art.url = final_image["url"]
             print(f"{self.webview_album_art.style=}")
         else:
