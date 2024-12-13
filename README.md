@@ -25,7 +25,7 @@ conda install -c conda-forge gtk3 pygobject
 1. Populate the `.env` file (and then the `src/spotifyrandom/env.py` file)
 2. Plug in an Android phone with debugging enabled
 3. Set Android USB to "File Transfer"
-4. Run the app locally once (via `briefcase dev`) so it generates a `.cache-spotipy` or `cache-spotipy.py` file
+4. Run the app locally once (via `briefcase dev`) so it generates a `cache-spoitpy.json` file
 5. Run `briefcase create android`
 6. Run `briefcase build android -u`
 7. Run `briefcase run android`
