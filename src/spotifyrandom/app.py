@@ -105,15 +105,38 @@ class SpotifyRandomAlbumPicker(toga.App):
         self._album_cache.write_text(json.dumps(self.albums))
 
     def refresh_cache(self, button: toga.Button):
-        print("Refreshing cache")
         self.label_album_count.text = "Refreshing cache..."
         # Redraw (see: https://github.com/beeware/toga/issues/1102)
         yield 0.1
-        self.albums = random_album.get_albums(
-            self._sp_client, progress=self.progress_bar_refresh_cache
-        )
+        yield from self.update_albums()
         self.save_to_cache()
         self.label_album_count.text = f"Total albums: {len(self.albums)}"
+
+    def update_albums(self):
+        self.albums = []
+        self.set_up_progress_bar()
+        for max_albums, albums in random_album.get_albums(self._sp_client):
+            self.albums.extend(albums)
+            total_albums = len(self.albums)
+            self.progress_bar_refresh_cache.max = max_albums
+            self.progress_bar_refresh_cache.value = total_albums
+            self.label_album_count.text = (
+                f"Refreshing cache... ({total_albums}/{max_albums})"
+            )
+            # Redraw
+            yield 0.1
+        self.tear_down_progress_bar()
+
+    def set_up_progress_bar(self) -> None:
+        self.progress_bar_refresh_cache.max = None
+        self.progress_bar_refresh_cache.value = 0
+        self.progress_bar_refresh_cache.style.visibility = VISIBLE
+        self.progress_bar_refresh_cache.start()
+
+    def tear_down_progress_bar(self) -> None:
+        self.progress_bar_refresh_cache.stop()
+        self.progress_bar_refresh_cache.style.visibility = HIDDEN
+        self.progress_bar_refresh_cache.value = 0
 
 
 def main():

@@ -1,5 +1,6 @@
 import random
 from pathlib import Path
+from typing import Generator
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
@@ -21,38 +22,14 @@ def extract_album(items: list) -> list:
     return albums
 
 
-def set_up_progress_bar(progress, max_value, value) -> None:
-    progress.max = max_value
-    progress.value = value
-    progress.style.visibility = VISIBLE
-    progress.start()
-    progress.refresh()
-
-
-def tear_down_progress_bar(progress) -> None:
-    progress.stop()
-    progress.style.visibility = HIDDEN
-    progress.value = 0
-    progress.refresh()
-
-
-def get_albums(sp, progress: ProgressBar | None = None) -> list[dict]:
-    albums = []
+def get_albums(sp) -> Generator[tuple[int, list[dict]], None, None]:
     print("Getting initial results")
     results = sp.current_user_saved_albums(limit=50)
-    albums.extend(extract_album(results["items"]))
-    if progress:
-        set_up_progress_bar(progress, results["total"], len(results["items"]))
+    yield results["total"], extract_album(results["items"])
     while results["next"]:
         print(f"Getting {results['limit'] + results['offset']} of {results['total']}")
         results = sp.next(results)
-        albums.extend(extract_album(results["items"]))
-        if progress:
-            progress.value += len(results["items"])
-        break
-    if progress:
-        tear_down_progress_bar(progress)
-    return albums
+        yield results["total"], extract_album(results["items"])
 
 
 def get_client():
