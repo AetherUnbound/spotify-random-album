@@ -2,11 +2,10 @@ import random
 from pathlib import Path
 
 import spotipy
-from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
 
+from spotifyrandom import env
 
-load_dotenv(dotenv_path=Path(__file__).parent / "env.py")
 
 SCOPE = "user-library-read"
 
@@ -34,8 +33,11 @@ def get_albums(sp) -> list[dict]:
 
 def get_client():
     oauth = SpotifyOAuth(
+        client_id=env.SPOTIPY_CLIENT_ID,
+        client_secret=env.SPOTIPY_CLIENT_SECRET,
+        redirect_uri=env.SPOTIPY_REDIRECT_URI,
         scope=SCOPE,
-        cache_path=Path(__file__).parent / "cache-spotipy.py",
+        cache_path=Path(__file__).parent / "resources" / "cache-spotipy.json",
     )
     return spotipy.Spotify(auth_manager=oauth)
 
