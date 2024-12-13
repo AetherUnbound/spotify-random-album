@@ -1,6 +1,8 @@
 """
 A small app which chooses a random album to play from your liked album library.
 """
+import json
+
 import toga
 from toga.style import Pack
 from toga.style.pack import COLUMN, CENTER, ROW
@@ -8,15 +10,36 @@ from toga.style.pack import COLUMN, CENTER, ROW
 from . import random_album
 
 
+CACHE_FILE = "album-cache.json"
+
+
 class SpotifyRandomAlbumPicker(toga.App):
     def startup(self):
         print("Creating client")
         self._sp_client = random_album.get_client()
-        print("Loading albums")
-        self.albums = random_album.get_albums(self._sp_client)
+
+        self.albums = []
+        self._album_cache = self.paths.cache / CACHE_FILE
+        if self._album_cache.exists():
+            print("Loading albums from cache")
+            try:
+                self.albums = json.loads(self._album_cache.read_text())
+            except json.JSONDecodeError:
+                print("Failed to load cache, loading albums")
+        if not self.albums:
+            print("Loading albums")
+            self.albums = random_album.get_albums(self._sp_client)
+            self.save_to_cache()
+
         main_box = toga.Box(style=Pack(direction=COLUMN))
 
-        button = toga.Button(
+        button_refresh_cache = toga.Button(
+            "Refresh cache",
+            on_press=self.refresh_cache,
+            style=Pack(padding=10),
+        )
+
+        button_get_album = toga.Button(
             "Get a random album",
             on_press=self.get_album,
             style=Pack(padding=10),
@@ -30,7 +53,7 @@ class SpotifyRandomAlbumPicker(toga.App):
                 text_align=CENTER,
                 alignment=CENTER,
                 font_weight="bold",
-                font_size=24,
+                font_size=18,
                 flex=1,
             ),
         )
@@ -41,12 +64,13 @@ class SpotifyRandomAlbumPicker(toga.App):
                 padding=(5, 10),
                 text_align=CENTER,
                 alignment=CENTER,
-                font_size=22,
+                font_size=16,
                 flex=1,
             ),
         )
 
-        main_box.add(button)
+        main_box.add(button_refresh_cache)
+        main_box.add(button_get_album)
         main_box.add(self.artist_label)
         main_box.add(self.album_label)
 
@@ -62,6 +86,12 @@ class SpotifyRandomAlbumPicker(toga.App):
         self.artist_label.refresh()
         self.album_label.refresh()
 
+    def save_to_cache(self):
+        self._album_cache.write_text(json.dumps(self.albums))
+
+    def refresh_cache(self, button: toga.Button):
+        self.albums = random_album.get_albums(self._sp_client)
+        self.save_to_cache()
 
 def main():
     return SpotifyRandomAlbumPicker()
