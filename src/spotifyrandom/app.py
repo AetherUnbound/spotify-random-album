@@ -32,7 +32,7 @@ class SpotifyRandomAlbumPicker(toga.App):
             self.albums = random_album.get_albums(self._sp_client)
             self.save_to_cache()
 
-        main_box = toga.Box(style=Pack(direction=COLUMN))
+        box_main = toga.Box(style=Pack(direction=COLUMN))
 
         # Main content
         self.button_get_album = toga.Button(
@@ -41,7 +41,7 @@ class SpotifyRandomAlbumPicker(toga.App):
             style=Pack(padding=10),
         )
 
-        self.artist_label = toga.Label(
+        self.label_artist = toga.Label(
             "",
             style=Pack(
                 direction=ROW,
@@ -53,7 +53,7 @@ class SpotifyRandomAlbumPicker(toga.App):
                 flex=1,
             ),
         )
-        self.album_label = toga.Label(
+        self.label_album = toga.Label(
             "",
             style=Pack(
                 direction=ROW,
@@ -74,21 +74,21 @@ class SpotifyRandomAlbumPicker(toga.App):
             style=Pack(padding=10, alignment=BOTTOM),
         )
 
-        main_box.add(self.button_get_album, self.artist_label, self.album_label)
-        main_box.add(spacer)
-        main_box.add(self.button_refresh_cache)
+        box_main.add(self.button_get_album, self.label_artist, self.label_album)
+        box_main.add(spacer)
+        box_main.add(self.button_refresh_cache)
 
         self.main_window = toga.MainWindow(title=self.formal_name)
-        self.main_window.content = main_box
+        self.main_window.content = box_main
         self.main_window.show()
 
     def get_album(self, button: toga.Button):
         album = random_album.get_random_album(self.albums)
         print(f"{album=}")
-        self.artist_label.text = album["artist"]
-        self.album_label.text = album["name"]
-        self.artist_label.refresh()
-        self.album_label.refresh()
+        self.label_artist.text = album["artist"]
+        self.label_album.text = album["name"]
+        self.label_artist.refresh()
+        self.label_album.refresh()
 
     def save_to_cache(self):
         self._album_cache.write_text(json.dumps(self.albums))
