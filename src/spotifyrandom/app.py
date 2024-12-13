@@ -5,6 +5,7 @@ A small app which chooses a random album to play from your liked album library.
 import json
 
 import toga
+from toga.constants import WHITE
 from toga.style import Pack
 from toga.style.pack import COLUMN, CENTER, ROW, BOTTOM, HIDDEN, VISIBLE
 
@@ -47,12 +48,22 @@ class SpotifyRandomAlbumPicker(toga.App):
             "",
             style=Pack(
                 direction=ROW,
-                padding=(5, 10),
+                padding=(5, 10, 30),
                 text_align=CENTER,
                 alignment=CENTER,
                 font_size=16,
                 flex=1,
             ),
+        )
+        box_webview = toga.Box(style=Pack(direction=ROW, flex=1))
+        self.webview_album_art = toga.WebView(style=Pack(flex=1))
+        box_webview.add(
+            # horizontal spacer left
+            toga.Box(style=Pack(flex=1)),
+            # content
+            self.webview_album_art,
+            # horizontal spacer right
+            toga.Box(style=Pack(flex=1))
         )
 
         spacer = toga.Box(style=Pack(flex=1))
@@ -71,7 +82,12 @@ class SpotifyRandomAlbumPicker(toga.App):
             style=Pack(visibility=HIDDEN)
         )
 
-        box_main.add(self.button_get_album, self.label_artist, self.label_album)
+        box_main.add(
+            self.button_get_album,
+            self.label_artist,
+            self.label_album,
+            box_webview
+        )
         box_main.add(spacer)
         box_main.add(
             self.progress_bar_refresh_cache,
@@ -96,14 +112,28 @@ class SpotifyRandomAlbumPicker(toga.App):
             print("Loading albums")
             yield from self.refresh_cache(None)
 
-
     def get_album(self, button: toga.Button):
         album = random_album.get_random_album(self.albums)
         print(f"{album=}")
         self.label_artist.text = album["artist"]
         self.label_album.text = album["name"]
-        self.label_artist.refresh()
-        self.label_album.refresh()
+        if album["images"]:
+            max_size = min(self.app.screens[0].size)
+            final_image = None
+            # Start from the smallest image and work up
+            for image in reversed(album["images"]):
+                if image["width"] > max_size or image["height"] > max_size:
+                    break
+                final_image = image
+            print(f"{final_image=}")
+            actual_size = min(final_image["width"], final_image["height"])
+            print(f"{actual_size=}")
+            self.webview_album_art.style.height = actual_size
+            self.webview_album_art.style.width = actual_size
+            self.webview_album_art.url = final_image["url"]
+            print(f"{self.webview_album_art.style=}")
+        else:
+            self.webview_album_art.url = None
 
     def save_to_cache(self):
         self._album_cache.write_text(json.dumps(self.albums))

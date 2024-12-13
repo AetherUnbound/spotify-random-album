@@ -18,13 +18,13 @@ def extract_album(items: list) -> list:
     for item in items:
         album = item["album"]
         artists = [artist["name"] for artist in album["artists"]]
-        image = album["images"][0] if album["images"] else None
+        images = album["images"]
         url = f"https://open.spotify.com/album/{album['id']}"
         albums.append(
             {
                 "artist": " // ".join(artists),
                 "name": album["name"],
-                "image": image,
+                "images": images,
                 "url": url,
             }
         )
