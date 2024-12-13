@@ -6,7 +6,7 @@ import json
 
 import toga
 from toga.style import Pack
-from toga.style.pack import COLUMN, CENTER, ROW, BOTTOM
+from toga.style.pack import COLUMN, CENTER, ROW, BOTTOM, HIDDEN, VISIBLE
 
 from . import random_album
 
@@ -77,10 +77,17 @@ class SpotifyRandomAlbumPicker(toga.App):
             on_press=self.refresh_cache,
             style=Pack(padding=10, alignment=BOTTOM),
         )
+        self.progress_bar_refresh_cache = toga.ProgressBar(
+            style=Pack(visibility=HIDDEN)
+        )
 
         box_main.add(self.button_get_album, self.label_artist, self.label_album)
         box_main.add(spacer)
-        box_main.add(self.label_album_count, self.button_refresh_cache)
+        box_main.add(
+            self.progress_bar_refresh_cache,
+            self.label_album_count,
+            self.button_refresh_cache,
+        )
 
         self.main_window = toga.MainWindow(title=self.formal_name)
         self.main_window.content = box_main
@@ -98,10 +105,15 @@ class SpotifyRandomAlbumPicker(toga.App):
         self._album_cache.write_text(json.dumps(self.albums))
 
     def refresh_cache(self, button: toga.Button):
-        self.albums = random_album.get_albums(self._sp_client)
+        print("Refreshing cache")
+        self.label_album_count.text = "Refreshing cache..."
+        # Redraw (see: https://github.com/beeware/toga/issues/1102)
+        yield 0.1
+        self.albums = random_album.get_albums(
+            self._sp_client, progress=self.progress_bar_refresh_cache
+        )
         self.save_to_cache()
         self.label_album_count.text = f"Total albums: {len(self.albums)}"
-        self.label_album_count.refresh()
 
 
 def main():
