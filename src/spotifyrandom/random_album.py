@@ -4,8 +4,6 @@ from typing import Generator
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from toga import ProgressBar
-from toga.style.pack import HIDDEN, VISIBLE
 
 from spotifyrandom import env
 
@@ -20,12 +18,14 @@ def extract_album(items: list) -> list:
         artists = [artist["name"] for artist in album["artists"]]
         images = album["images"]
         url = f"https://open.spotify.com/album/{album['id']}"
+        uri = f"spotify:album:{album['id']}"
         albums.append(
             {
                 "artist": " // ".join(artists),
                 "name": album["name"],
                 "images": images,
                 "url": url,
+                "uri": uri,
             }
         )
     return albums

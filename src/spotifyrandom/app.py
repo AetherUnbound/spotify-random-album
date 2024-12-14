@@ -5,11 +5,19 @@ A small app which chooses a random album to play from your liked album library.
 import json
 
 import toga
-from toga.constants import WHITE
+from toga.platform import current_platform
 from toga.style import Pack
 from toga.style.pack import COLUMN, CENTER, ROW, BOTTOM, HIDDEN, VISIBLE
 
 from . import random_album
+
+IS_ANRDOID = current_platform == "android"
+if IS_ANRDOID:
+    from android.content import Intent
+    from android.net import Uri
+else:
+    Intent = None
+    Uri = None
 
 
 CACHE_FILE = "album-cache.json"
@@ -23,6 +31,7 @@ class SpotifyRandomAlbumPicker(toga.App):
 
         self.albums = []
         self._album_cache = self.paths.cache / CACHE_FILE
+        self._spotify_uri = None
 
         box_main = toga.Box(style=Pack(direction=COLUMN))
 
@@ -56,6 +65,14 @@ class SpotifyRandomAlbumPicker(toga.App):
                 flex=1,
             ),
         )
+        self.button_spotify_link = toga.Button(
+            "Open in Spotify",
+            on_press=self.open_spotify_uri,
+            style=Pack(padding=5),
+        )
+        if not IS_ANRDOID:
+            self.button_spotify_link.enabled = False
+
         box_webview = toga.Box(style=Pack(direction=ROW, alignment=CENTER))
         self.webview_album_art = toga.WebView(
             style=Pack(alignment=CENTER, height=IDEAL_SIZE, width=IDEAL_SIZE)
@@ -86,10 +103,14 @@ class SpotifyRandomAlbumPicker(toga.App):
         )
 
         box_main.add(
-            self.button_get_album, self.label_artist, self.label_album, box_webview
+            self.button_get_album,
+            self.label_artist,
+            self.label_album,
+            box_webview,
         )
         box_main.add(spacer)
         box_main.add(
+            self.button_spotify_link,
             self.progress_bar_refresh_cache,
             self.label_album_count,
             self.button_refresh_cache,
@@ -111,12 +132,14 @@ class SpotifyRandomAlbumPicker(toga.App):
         if not self.albums:
             print("Loading albums")
             yield from self.refresh_cache(None)
+        yield self.get_album(None)
 
-    def get_album(self, button: toga.Button):
+    def get_album(self, button: toga.Button | None):
         album = random_album.get_random_album(self.albums)
         print(f"{album=}")
         self.label_artist.text = album["artist"]
         self.label_album.text = album["name"]
+        self._spotify_uri = album["uri"]
         if album["images"]:
             final_image = None
             # Start from the smallest image and work up
@@ -131,6 +154,17 @@ class SpotifyRandomAlbumPicker(toga.App):
             print(f"{self.webview_album_art.style=}")
         else:
             self.webview_album_art.url = None
+
+    def open_spotify_uri(self, button: toga.Button):
+        # Taken from: https://developer.spotify.com/documentation/android/tutorials/content-linking
+        if Intent is None or Uri is None:
+            print("Opening Spotify URI not supported on this platform")
+            return
+        app = self.main_window.app._impl
+        print(f"{self._spotify_uri}")
+        intent = Intent(Intent.ACTION_VIEW)
+        intent.setData(Uri.parse(self._spotify_uri))
+        self.main_window.app._impl.start_activity(intent)
 
     def save_to_cache(self):
         self._album_cache.write_text(json.dumps(self.albums))
