@@ -13,15 +13,16 @@ For conda on linux, you may need to run:
 conda install -c conda-forge gtk3 pygobject
 ```
 
-### Installing
+## Installing
 
-- Create the environment: `conda create -n spotify-random-album -c conda-forge meson gtk3 pygobject python=3.11 -y`
+- Create the environment: `conda create -n spotify-random-album -c conda-forge meson gtk3 pygobject python=3.12 -y`
 - Install briefcase: `pip install briefcase`
 - Install dependencies: `pip install -e .`
 - Run the app: `briefcase dev`
 
-### How to build and run
+## How to build and run
 
+## On Android
 _NB: For help here, see the [Beeware tutorial for Android apps](https://docs.beeware.org/en/latest/tutorial/tutorial-5/android.html)_
 
 1. Populate the `.env` file (and then the `src/spotifyrandom/env.py` file)
@@ -30,7 +31,9 @@ _NB: For help here, see the [Beeware tutorial for Android apps](https://docs.bee
 4. Run the app locally once (via `briefcase dev`) so it generates a `cache-spoitpy.json` file
 5. Run `briefcase create android`
 6. Run `briefcase build android -u`
-7. Run `briefcase run android`
+7. Run `briefcase run android -u` (with `-d <device>` as well for a specific device)
+
+### On Linux
 
 ## Original script
 
