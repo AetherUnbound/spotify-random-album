@@ -157,10 +157,10 @@ class SpotifyRandomAlbumPicker(toga.App):
 
     def open_spotify_uri(self, button: toga.Button):
         # Taken from: https://developer.spotify.com/documentation/android/tutorials/content-linking
+        # Also helpful maybe: https://github.com/beeware/toga/discussions/2499
         if Intent is None or Uri is None:
             print("Opening Spotify URI not supported on this platform")
             return
-        app = self.main_window.app._impl
         print(f"{self._spotify_uri}")
         intent = Intent(Intent.ACTION_VIEW)
         intent.setData(Uri.parse(self._spotify_uri))
